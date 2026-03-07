@@ -1,0 +1,220 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+}
+
+/* Navbar */
+.navbar {
+  background: #1e293b;
+  padding: 15px 30px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin-left: 15px;
+  font-weight: 500;
+}
+
+.navbar a:hover {
+  color: #38bdf8;
+}
+
+/* Container */
+.container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 30px auto;
+}
+
+/* Form */
+.form-container {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: auto;
+}
+
+.form-container h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.form-container input,
+.form-container select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 10px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.form-container button:hover {
+  background: #1d4ed8;
+}
+
+/* Event Cards */
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.event-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.event-card h3 {
+  margin-bottom: 10px;
+}
+
+.event-card p {
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.event-card button {
+  padding: 8px 12px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.event-card button:hover {
+  background: #15803d;
+}
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-image: url('/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+
+.form-container, .event-card {
+  background: rgba(255, 255, 255, 0.9); /* semi-transparent white */
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1e293b;
+  padding: 15px 40px;
+  color: white;
+}
+
+.nav-links a {
+  margin-right: 20px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: #38bdf8;
+}
+
+.logout-btn {
+  background: crimson;
+  border: none;
+  padding: 6px 12px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.role-badge {
+  background: #38bdf8;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-right: 15px;
+  font-size: 14px;
+}
+.rbc-calendar {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.rbc-event {
+  background: #007bff;
+  border-radius: 5px;
+  padding: 3px;
+}
+
+.rbc-toolbar button {
+  background: #1e90ff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  margin: 3px;
+  border-radius: 5px;
+}
+
+.rbc-toolbar button:hover {
+  background: #0056b3;
+}
+.rbc-event {
+  background: linear-gradient(45deg, #ff512f, #dd2476);
+  color: white;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 6px;
+}
+.rbc-event {
+  white-space: normal !important;   /* allow text to wrap */
+  word-break: break-word;
+  font-size: 12px;
+  padding: 4px;
+}
+
+.rbc-event-content {
+  white-space: normal !important;
+  line-height: 1.2;
+}
+body{
+  background-image: url("/bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
