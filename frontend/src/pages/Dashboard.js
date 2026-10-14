@@ -7,7 +7,7 @@ function Dashboard() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [attendees, setAttendees] = useState([]);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [, setSelectedEvent] = useState(null);
   const [showAttendees, setShowAttendees] = useState(false);
   const eventsPerPage = 4;
 
