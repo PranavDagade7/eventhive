@@ -1,7 +1,8 @@
+
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api"
+  baseURL: "https://eventhive-2f0q.onrender.com"
 });
 
 // Automatically attach token to every request
