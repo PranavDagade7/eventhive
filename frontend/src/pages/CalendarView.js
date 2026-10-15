@@ -19,7 +19,8 @@ const CalendarView = () => {
   const fetchEvents = async () => {
     try {
 
-      const res = await axios.get("http://localhost:5000/api/events");
+
+const res = await API.get("/events");
 
       const formattedEvents = res.data
         .filter(event => event.date)
