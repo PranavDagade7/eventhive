@@ -1,108 +1,93 @@
-🎟️ EventHive – Event Management & Ticket Booking System
+# 🎟️ EventHive – Event Management & Ticket Booking System
 
-A full-stack event management and ticket booking platform built with **React, Node.js, Express, and MongoDB** where organizers can create events and attendees can book tickets and download QR-based event passes.
+A full-stack event management and ticket booking platform built using **React.js, Node.js, Express.js, and MongoDB**. EventHive allows organizers to manage events and attendees to discover events, book tickets, and download PDF tickets with QR codes for convenient event entry.
 
----
+🌐 **Live Demo:** [Explore EventHive](https://eventhive-phi.vercel.app/)
 
-## Features
-
-• User registration & login (JWT authentication)
-• Role-based system (**Organizer / Attendee**)
-• Organizers can **create, edit, and delete events**
-• Attendees can **RSVP and book tickets**
-• Ticket booking with **multiple quantity support**
-• **QR Code based ticket generation**
-• **Downloadable PDF ticket** with event details
-• Organizer can **view event attendees**
-• Event **search and pagination**
-• Event cards with **image, location, date & price**
+💻 **GitHub Repository:** [View Source Code](https://github.com/PranavDagade7/eventhive)
 
 ---
 
-## Tech Stack
+## 🚀 Overview
 
-React | Node.js | Express | MongoDB | JWT | Axios | PDFKit | QRCode | CSS
-
----
-
-## Setup
-
-### Backend
-
-```bash
-cd backend
-npm install
-npm start
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm start
-```
+EventHive simplifies event organization and ticket booking through a user-friendly web application. Organizers can manage events, while attendees can discover events, RSVP, book tickets, and download QR-code-enabled PDF tickets.
 
 ---
 
-## API Endpoints
+## ✨ Features
 
-| Method | Route                           | Description                |
-| ------ | ------------------------------- | -------------------------- |
-| POST   | /api/auth/register              | Register user              |
-| POST   | /api/auth/login                 | Login user                 |
-| GET    | /api/events                     | Get all events             |
-| POST   | /api/events                     | Create event (Organizer)   |
-| PUT    | /api/events/:id                 | Update event               |
-| DELETE | /api/events/:id                 | Delete event               |
-| POST   | /api/events/:id/rsvp            | RSVP to event              |
-| POST   | /api/tickets/book/:eventId      | Book event tickets         |
-| GET    | /api/tickets/attendees/:eventId | View attendees (Organizer) |
-| GET    | /api/tickets/download/:eventId  | Download ticket PDF        |
+### 🔐 Authentication & Authorization
+- User registration and login.
+- JWT-based authentication.
+- Role-based access for organizers and attendees.
 
----
+### 📅 Event Management
+- Create, edit, and delete events.
+- View event images, locations, dates, and prices.
+- Search events and browse using pagination.
 
-## Ticket PDF Includes
+### 🎫 Ticket Booking
+- RSVP to events.
+- Book multiple tickets.
+- Generate QR-code-based tickets.
+- Download tickets as PDF documents.
 
-• Event name
-• Event location
-• Date & time
-• User name & email
-• Number of tickets booked
-• QR code for event entry
+### 👥 Organizer Dashboard
+- Manage created events.
+- View event attendees.
+- Update and delete event listings.
 
 ---
 
-## Project Structure
+## 🛠️ Tech Stack
 
-```
-eventhive
-│
-├── backend
-│   ├── models
-│   ├── routes
-│   ├── middleware
-│   └── server.js
-│
-├── frontend
-│   ├── components
-│   ├── pages
-│   ├── api.js
-│   └── App.js
-```
+| Technology | Purpose |
+|---|---|
+| ⚛️ React.js | Frontend |
+| 🟢 Node.js | Backend runtime |
+| 🚂 Express.js | REST API |
+| 🍃 MongoDB | Database |
+| 🔑 JWT | Authentication |
+| 📡 Axios | API communication |
+| 📄 PDFKit | PDF generation |
+| 📱 QRCode | QR code generation |
+| 🎨 CSS | Styling |
+| ☁️ Vercel | Frontend deployment |
+| ☁️ Render | Backend deployment |
 
 ---
 
-## Author
+## 🎟️ Ticket PDF Features
+
+- Event name and location.
+- Event date and time.
+- Attendee name and email.
+- Number of tickets booked.
+- QR code for ticket identification.
+
+---
+
+## 🔮 Future Enhancements
+
+- 💳 Online payment integration.
+- 📧 Email ticket confirmation.
+- 🏷️ Event categories and filters.
+- 📱 Improved mobile responsiveness.
+- 📊 Admin analytics dashboard.
+- ✅ QR code verification and check-in.
+
+---
+
+## 👨‍💻 Author
 
 **Pranav Dagade**
 
+🔗 [GitHub Profile](https://github.com/PranavDagade7)
+
 ---
 
-## Future Improvements
+## ⭐ Support
 
-• Online payment integration
-• Email ticket confirmation
-• Event categories & filters
-• Mobile responsive UI
-• Admin analytics dashboard
+If you like EventHive, consider giving the repository a ⭐ on GitHub!
+
+**Discover events. Book tickets. Make memories. — EventHive 🎉**
