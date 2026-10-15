@@ -1,6 +1,6 @@
+
 import { useEffect, useState } from "react";
 import API from "../api";
-import axios from "axios";
 
 function Dashboard() {
   const [events, setEvents] = useState([]);
@@ -11,7 +11,9 @@ function Dashboard() {
   const [showAttendees, setShowAttendees] = useState(false);
   const eventsPerPage = 4;
 
-  const role = (localStorage.getItem("role") || "").toLowerCase().trim();
+  const role = (localStorage.getItem("role") || "")
+    .toLowerCase()
+    .trim();
 
   const [form, setForm] = useState({
     title: "",
@@ -20,7 +22,7 @@ function Dashboard() {
     price: "",
     image: "",
     date: "",
-    time:"",  // ✅ NEW FIELD
+    time: ""
   });
 
   useEffect(() => {
@@ -32,7 +34,7 @@ function Dashboard() {
       const res = await API.get("/events");
       setEvents(res.data);
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching events:", err);
     }
   };
 
@@ -41,49 +43,50 @@ function Dashboard() {
   };
 
   const createEvent = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    // combine date and time
-    const eventData = {
-      ...form,
-      date: form.date && form.time ? `${form.date}T${form.time}` : form.date
-    };
+    try {
+      const eventData = {
+        ...form,
+        date:
+          form.date && form.time
+            ? `${form.date}T${form.time}`
+            : form.date
+      };
 
-    if (form._id) {
-      await API.put(`/events/${form._id}`, eventData);
-      alert("Event Updated ✅");
-    } else {
-      await API.post("/events", eventData);
-      alert("Event Created ✅");
+      if (form._id) {
+        await API.put(`/events/${form._id}`, eventData);
+        alert("Event Updated ✅");
+      } else {
+        await API.post("/events", eventData);
+        alert("Event Created ✅");
+      }
+
+      setForm({
+        title: "",
+        description: "",
+        location: "",
+        price: "",
+        image: "",
+        date: "",
+        time: ""
+      });
+
+      fetchEvents();
+    } catch (err) {
+      alert(err.response?.data?.message || "Error");
     }
-
-    setForm({
-      title: "",
-      description: "",
-      location: "",
-      price: "",
-      image: "",
-      date: "",
-      time: ""
-    });
-
-    fetchEvents();
-
-  } catch (err) {
-    alert(err.response?.data?.message || "Error");
-  }
-};
+  };
 
   const editEvent = (event) => {
-  setForm({
-    ...event,
-    date: event.date ? event.date.substring(0, 10) : "",
-    time: event.date ? event.date.substring(11, 16) : ""
-  });
+    setForm({
+      ...event,
+      date: event.date ? event.date.substring(0, 10) : "",
+      time: event.date ? event.date.substring(11, 16) : ""
+    });
 
-  window.scrollTo(0, 0);
-};
+    window.scrollTo(0, 0);
+  };
 
   const deleteEvent = async (id) => {
     try {
@@ -91,7 +94,7 @@ function Dashboard() {
       alert("Event Deleted 🗑");
       fetchEvents();
     } catch (err) {
-      alert("Delete failed");
+      alert(err.response?.data?.message || "Delete failed");
     }
   };
 
@@ -105,77 +108,96 @@ function Dashboard() {
     }
   };
 
+  // Book tickets using the deployed Render API
   const bookTicket = async (id) => {
     const quantity = prompt("Enter number of tickets:");
 
-  if (!quantity || quantity <= 0) {
-    alert("Please enter valid number of tickets");
-    return;
-  }
-  try {
+    if (
+      !quantity ||
+      !Number.isInteger(Number(quantity)) ||
+      Number(quantity) <= 0
+    ) {
+      alert("Please enter a valid number of tickets");
+      return;
+    }
 
-    const res = await axios.post(
-      `http://localhost:5000/api/tickets/book/${id}`,
-      { quantity },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+    try {
+      const res = await API.post(`/tickets/book/${id}`, {
+        quantity: Number(quantity)
+      });
+
+      alert(res.data.message || "Ticket Booked Successfully 🎟");
+      await fetchEvents();
+    } catch (err) {
+      console.error(
+        "Booking error:",
+        err.response?.data || err.message
+      );
+
+      alert(err.response?.data?.message || "Booking failed ❌");
+    }
+  };
+
+  // Download ticket using the deployed Render API
+  const downloadTicket = async (eventId) => {
+    try {
+      const response = await API.get(
+        `/tickets/download/${eventId}`,
+        { responseType: "blob" }
+      );
+
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "ticket.pdf";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Ticket download failed:", err);
+
+      // Axios may return an error response as a Blob.
+      if (err.response?.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const data = JSON.parse(text);
+          alert(data.message || "Failed to download ticket");
+          return;
+        } catch {
+          // Use the fallback message below.
         }
       }
-    );
 
-    alert(res.data.message || "Ticket Booked Successfully 🎟");
-
-    fetchEvents(); // refresh events after booking
-
-  } catch (err) {
-
-    console.log(err.response?.data || err.message);
-
-    alert(err.response?.data?.message || "Booking failed ❌");
-
-  }
-};
-const downloadTicket = async (eventId) => {
-
-  const token = localStorage.getItem("token");
-
-  const response = await fetch(
-    `http://localhost:5000/api/tickets/download/${eventId}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      alert(
+        err.response?.data?.message ||
+        "Failed to download ticket. Please try again."
+      );
     }
-  );
+  };
 
-  const blob = await response.blob();
-  const url = window.URL.createObjectURL(blob);
+  // View attendees using the deployed Render API
+  const viewAttendees = async (eventId) => {
+    try {
+      const res = await API.get(`/tickets/attendees/${eventId}`);
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "ticket.pdf";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+      setAttendees(res.data);
+      setSelectedEvent(eventId);
+      setShowAttendees(true);
+    } catch (err) {
+      console.error(
+        "Error fetching attendees:",
+        err.response?.data || err.message
+      );
 
-};
-   const viewAttendees = async (eventId) => {
-  try {
-
-    const res = await axios.get(
-      `http://localhost:5000/api/tickets/attendees/${eventId}`
-    );
-
-    setAttendees(res.data);
-    setSelectedEvent(eventId);   // ⭐ store event id
-    setShowAttendees(true);
-
-  } catch (err) {
-    console.error("Error fetching attendees", err);
-  }
-};
+      alert(
+        err.response?.data?.message ||
+        "Failed to fetch attendees"
+      );
+    }
+  };
 
   const filteredEvents = events.filter((event) =>
     event.title.toLowerCase().includes(search.toLowerCase())
@@ -183,12 +205,13 @@ const downloadTicket = async (eventId) => {
 
   const indexOfLast = currentPage * eventsPerPage;
   const indexOfFirst = indexOfLast - eventsPerPage;
-  const currentEvents = filteredEvents.slice(indexOfFirst, indexOfLast);
+  const currentEvents = filteredEvents.slice(
+    indexOfFirst,
+    indexOfLast
+  );
 
   return (
-    
-  <div style={{ maxWidth: "1200px", margin: "auto", padding: "20px" }}>
-
+    <div style={{ maxWidth: "1200px", margin: "auto", padding: "20px" }}>
       {/* CREATE EVENT */}
       {role === "organizer" && (
         <div className="form-container">
@@ -235,7 +258,6 @@ const downloadTicket = async (eventId) => {
               onChange={handleChange}
             />
 
-            {/* ✅ DATE INPUT ADDED */}
             <input
               name="date"
               type="date"
@@ -243,11 +265,12 @@ const downloadTicket = async (eventId) => {
               onChange={handleChange}
               required
             />
+
             <input
-                type="time"
-                name="time"
-                value={form.time || ""}
-                onChange={handleChange}
+              type="time"
+              name="time"
+              value={form.time || ""}
+              onChange={handleChange}
             />
 
             <button type="submit">
@@ -262,11 +285,16 @@ const downloadTicket = async (eventId) => {
         type="text"
         placeholder="Search events..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setCurrentPage(1);
+        }}
         style={{ padding: "10px", margin: "20px 0", width: "100%" }}
       />
 
-      <h2 style={{ marginBottom: "20px", color: "lightblue" }}>All Events</h2>
+      <h2 style={{ marginBottom: "20px", color: "lightblue" }}>
+        All Events
+      </h2>
 
       {currentEvents.length === 0 ? (
         <p>No events found.</p>
@@ -274,11 +302,10 @@ const downloadTicket = async (eventId) => {
         <div className="event-grid">
           {currentEvents.map((event) => (
             <div key={event._id} className="event-card">
-
               {event.image && (
                 <img
                   src={event.image}
-                  alt="event"
+                  alt={event.title}
                   style={{ width: "100%", borderRadius: "8px" }}
                 />
               )}
@@ -286,151 +313,178 @@ const downloadTicket = async (eventId) => {
               <h3>{event.title}</h3>
               <p>{event.description}</p>
 
-              <p><strong>Location:</strong> {event.location}</p>
-              <p><strong>Price:</strong> ₹{event.price}</p>
+              <p>
+                <strong>Location:</strong> {event.location}
+              </p>
 
-              {/* ✅ SHOW DATE */}
-            <p>
-            <strong>Date & Time:</strong>{" "}
-            {event.date ? new Date(event.date).toLocaleString() : "No Date"}
-            </p>             
-            <p><strong>Total Attendees:</strong> {event.attendeesCount || 0}</p>              
-            {role === "attendee" && (
+              <p>
+                <strong>Price:</strong> ₹{event.price}
+              </p>
+
+              <p>
+                <strong>Date &amp; Time:</strong>{" "}
+                {event.date
+                  ? new Date(event.date).toLocaleString()
+                  : "No Date"}
+              </p>
+
+              <p>
+                <strong>Total Attendees:</strong>{" "}
+                {event.attendeesCount || 0}
+              </p>
+
+              {role === "attendee" && (
                 <>
-                  <button onClick={() => rsvp(event._id)}>RSVP</button>
+                  <button onClick={() => rsvp(event._id)}>
+                    RSVP
+                  </button>
 
                   <button
                     onClick={() => bookTicket(event._id)}
-                    style={{ marginLeft: "10px", background: "orange", color: "#fff" }}
+                    style={{
+                      marginLeft: "10px",
+                      background: "orange",
+                      color: "#fff"
+                    }}
                   >
                     Book Ticket 🎟
                   </button>
-                  <button onClick={() => downloadTicket(event._id)}
-                    style={{ marginTop: "10px", background: "red", color: "#fff" }}>
+
+                  <button
+                    onClick={() => downloadTicket(event._id)}
+                    style={{
+                      marginTop: "10px",
+                      background: "red",
+                      color: "#fff"
+                    }}
+                  >
                     Download Ticket
-                    </button>
+                  </button>
                 </>
               )}
 
               {role === "organizer" && (
-  <div style={{ marginTop: "10px" }}>
-    <button onClick={() => editEvent(event)}>
-      Edit
-    </button>
+                <div style={{ marginTop: "10px" }}>
+                  <button onClick={() => editEvent(event)}>
+                    Edit
+                  </button>
 
-    <button
-      onClick={() => deleteEvent(event._id)}
-      style={{
-        marginLeft: "10px",
-        background: "red",
-        color: "#fff"
-      }}
-    >
-      Delete
-    </button>
+                  <button
+                    onClick={() => deleteEvent(event._id)}
+                    style={{
+                      marginLeft: "10px",
+                      background: "red",
+                      color: "#fff"
+                    }}
+                  >
+                    Delete
+                  </button>
 
-    <br />
+                  <br />
 
-    <button
-      onClick={() => viewAttendees(event._id)}
-      style={{
-        marginTop: "10px",
-        background: "green",
-        color: "#fff"
-      }}
-    >
-      View Attendees 👥
-    </button>
-  </div>
-)}
+                  <button
+                    onClick={() => viewAttendees(event._id)}
+                    style={{
+                      marginTop: "10px",
+                      background: "green",
+                      color: "#fff"
+                    }}
+                  >
+                    View Attendees 👥
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
       )}
 
       {/* ATTENDEE LIST MODAL */}
-    {showAttendees && (
-  <div
-    style={{
-      background: "#fff",
-      padding: "20px",
-      marginTop: "20px",
-      borderRadius: "10px"
-    }}
-  >
-    <h3>Attendee List</h3>
+      {showAttendees && (
+        <div
+          style={{
+            background: "#fff",
+            padding: "20px",
+            marginTop: "20px",
+            borderRadius: "10px"
+          }}
+        >
+          <h3>Attendee List</h3>
 
-{attendees.length === 0 ? (
-  <p>No attendees for this event</p>
-) : (
- Object.values(
-  attendees.reduce((acc, ticket) => {
+          {attendees.length === 0 ? (
+            <p>No attendees for this event</p>
+          ) : (
+            Object.values(
+              attendees.reduce((acc, ticket) => {
+                const key = ticket.email;
 
-    const key = ticket.email;
+                if (!acc[key]) {
+                  acc[key] = {
+                    name: ticket.name,
+                    email: ticket.email,
+                    count: 0
+                  };
+                }
 
-    if (!acc[key]) {
-      acc[key] = {
-        name: ticket.name,
-        email: ticket.email,
-        count: 0
-      };
-    }
+                acc[key].count += ticket.ticketCount;
 
-    acc[key].count += ticket.ticketCount; // FIX
+                return acc;
+              }, {})
+            ).map((person, index) => (
+              <p key={index}>
+                👤 {person.name} ({person.count} tickets)
+              </p>
+            ))
+          )}
 
-    return acc;
-
-  }, {})
-).map((person, index) => (
-  <p key={index}>
-    👤 {person.name} ({person.count} tickets)
-  </p>
-))
-)}
-
-    <button
-      onClick={() => {
-        setShowAttendees(false);
-        setAttendees([]);
-        setSelectedEvent(null);
-      }}
-      style={{
-        background: "red",
-        color: "white",
-        padding: "8px 15px",
-        border: "none",
-        borderRadius: "5px",
-        cursor: "pointer"
-      }}
-    >
-      Close
-    </button>
-    
-  </div>
-)}
+          <button
+            onClick={() => {
+              setShowAttendees(false);
+              setAttendees([]);
+              setSelectedEvent(null);
+            }}
+            style={{
+              background: "red",
+              color: "white",
+              padding: "8px 15px",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer"
+            }}
+          >
+            Close
+          </button>
+        </div>
+      )}
 
       {/* PAGINATION */}
       <div style={{ marginTop: "20px" }}>
-        {Array.from({ length: Math.ceil(filteredEvents.length / eventsPerPage) }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            style={{
-              margin: "5px",
-              padding: "5px 10px",
-              background: i + 1 === currentPage ? "#333" : "#eee",
-              color: i + 1 === currentPage ? "#fff" : "#000",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            {i + 1}
-          </button>
-          
-        ))}
+        {Array.from(
+          {
+            length: Math.ceil(
+              filteredEvents.length / eventsPerPage
+            )
+          },
+          (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              style={{
+                margin: "5px",
+                padding: "5px 10px",
+                background:
+                  i + 1 === currentPage ? "#333" : "#eee",
+                color: i + 1 === currentPage ? "#fff" : "#000",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer"
+              }}
+            >
+              {i + 1}
+            </button>
+          )
+        )}
       </div>
-
     </div>
   );
 }
